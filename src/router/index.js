@@ -10,6 +10,7 @@ import Layout from '@/layout'
 import dictionaryRouter from './modules/dictionary'
 import customerRouter from './modules/customer'
 import userRouter from './modules/user'
+import voluntaryRouter from './modules/voluntary'
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -106,6 +107,7 @@ export const asyncRoutes = [
   customerRouter,
   userRouter,
   dictionaryRouter,
+  voluntaryRouter,
   {
     path: '/theme',
     component: Layout,
