@@ -18,7 +18,14 @@ export function getInfo(token) {
 
 export function logout() {
   return request({
-    url: '/authentication/logout',
+    url: '/auth?method=logout',
     method: 'post'
+  })
+}
+
+export function getSchools() {
+  return request({
+    url: '/user?method=schools',
+    method: 'get'
   })
 }

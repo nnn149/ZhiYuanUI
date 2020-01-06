@@ -23,6 +23,14 @@ export function submit() {
   })
 }
 
+export function info(userId) {
+  return request({
+    url: '/voluntary?method=info',
+    method: 'get',
+    params: { userId }
+  })
+}
+
 export function fetchOne(id) {
   return request({
     url: '/voluntary/detail',

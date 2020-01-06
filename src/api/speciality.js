@@ -8,10 +8,10 @@ export function fetchList(data) {
   })
 }
 
-export function fetchOne(id) {
+export function fetchOne(id, userId) {
   return request({
     url: '/speciality?method=infoById',
     method: 'get',
-    params: { id }
+    params: { id, userId }
   })
 }

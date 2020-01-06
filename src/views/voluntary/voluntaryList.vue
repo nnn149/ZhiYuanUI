@@ -19,10 +19,6 @@
       @selection-change="changeFun"
     >
       <el-table-column
-        type="selection"
-        width="50"
-      />
-      <el-table-column
         label="ID"
         prop="id"
         sortable="custom"
@@ -34,14 +30,14 @@
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="考生号" min-width="110px">
+      <el-table-column label="考生号" width="120px">
         <template slot-scope="scope">
           <span>{{ scope.row.userId }}</span>
         </template>
       </el-table-column>
       <el-table-column label="姓名" width="80px" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.nickname }}</span>
+          <span>{{ row.nickname }}</span>
         </template>
       </el-table-column>
       <el-table-column label="填报状态" min-width="60px">
@@ -63,8 +59,11 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button ref="btnEdit" :style="{ display: visibleEdit }" type="primary" size="mini" @click="handleUpdate(row)">
             编辑
+          </el-button>
+          <el-button ref="btnSee" :style="{ display: visibleSee }" type="primary" size="mini" @click="handleUpdate(row)">
+            查看
           </el-button>
           <el-button type="primary" size="mini" @click="handleSubmit()">
             提交
@@ -81,17 +80,31 @@
         label-position="center"
         label-width="auto"
       >
+
         <el-row>
-          <el-col :span="6">
-            <el-form-item label="志愿1" prop="name">
+          <el-col :span="8">
+            <el-form-item label="第一志愿：  学校" prop="name">
+              <el-select v-model="temp.schoolIds[0]" filterable placeholder="请选择" @change="scChange1">
+                <el-option
+                  v-for="item in schoolOptions"
+                  :key="item.id"
+                  :label="item.nickname"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="专业" prop="name">
               <el-select
                 v-model="temp.speciality1"
+                :remote-method="remoteMethod1"
                 filterable
                 remote
                 reserve-keyword
                 placeholder="请输入专业代码"
-                :remote-method="remoteMethod"
                 :loading="specialityLoading"
+                @focus="clearSelect"
               >
                 <el-option
                   v-for="item in specialityOptions"
@@ -102,16 +115,37 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="志愿2" prop="tel">
+          <el-col :span="8">
+            <el-form-item label="" prop="name">
+              <el-checkbox v-model="temp.tiaoji1">服从调剂</el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="第二志愿：  学校" prop="name">
+              <el-select v-model="temp.schoolIds[1]" filterable placeholder="请选择" @change="scChange2">
+                <el-option
+                  v-for="item in schoolOptions"
+                  :key="item.id"
+                  :label="item.nickname"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="专业" prop="name">
               <el-select
                 v-model="temp.speciality2"
+                :remote-method="remoteMethod2"
                 filterable
                 remote
                 reserve-keyword
                 placeholder="请输入专业代码"
-                :remote-method="remoteMethod"
                 :loading="specialityLoading"
+                @focus="clearSelect"
               >
                 <el-option
                   v-for="item in specialityOptions"
@@ -122,16 +156,37 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="志愿3" prop="age">
+          <el-col :span="8">
+            <el-form-item label="" prop="name">
+              <el-checkbox v-model="temp.tiaoji2">服从调剂</el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="第三志愿：  学校" prop="name">
+              <el-select v-model="temp.schoolIds[2]" filterable placeholder="请选择" @change="scChange3">
+                <el-option
+                  v-for="item in schoolOptions"
+                  :key="item.id"
+                  :label="item.nickname"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="专业" prop="name">
               <el-select
                 v-model="temp.speciality3"
+                :remote-method="remoteMethod3"
                 filterable
                 remote
                 reserve-keyword
                 placeholder="请输入专业代码"
-                :remote-method="remoteMethod"
                 :loading="specialityLoading"
+                @focus="clearSelect"
               >
                 <el-option
                   v-for="item in specialityOptions"
@@ -142,16 +197,37 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="志愿4" prop="age">
+          <el-col :span="8">
+            <el-form-item label="" prop="name">
+              <el-checkbox v-model="temp.tiaoji3">服从调剂</el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="第四志愿：  学校" prop="name">
+              <el-select v-model="temp.schoolIds[3]" filterable placeholder="请选择" @change="scChange4">
+                <el-option
+                  v-for="item in schoolOptions"
+                  :key="item.id"
+                  :label="item.nickname"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="专业" prop="name">
               <el-select
                 v-model="temp.speciality4"
+                :remote-method="remoteMethod4"
                 filterable
                 remote
                 reserve-keyword
                 placeholder="请输入专业代码"
-                :remote-method="remoteMethod"
                 :loading="specialityLoading"
+                @focus="clearSelect"
               >
                 <el-option
                   v-for="item in specialityOptions"
@@ -162,19 +238,37 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="8">
+            <el-form-item label="" prop="name">
+              <el-checkbox v-model="temp.tiaoji4">服从调剂</el-checkbox>
+            </el-form-item>
+          </el-col>
         </el-row>
 
         <el-row>
-          <el-col :span="6">
-            <el-form-item label="志愿5" prop="name">
+          <el-col :span="8">
+            <el-form-item label="第五志愿：  学校" prop="name">
+              <el-select v-model="temp.schoolIds[4]" filterable placeholder="请选择" @change="scChange5">
+                <el-option
+                  v-for="item in schoolOptions"
+                  :key="item.id"
+                  :label="item.nickname"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="专业" prop="name">
               <el-select
                 v-model="temp.speciality5"
+                :remote-method="remoteMethod5"
                 filterable
                 remote
                 reserve-keyword
                 placeholder="请输入专业代码"
-                :remote-method="remoteMethod"
                 :loading="specialityLoading"
+                @focus="clearSelect"
               >
                 <el-option
                   v-for="item in specialityOptions"
@@ -185,16 +279,37 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="志愿6" prop="tel">
+          <el-col :span="8">
+            <el-form-item label="" prop="name">
+              <el-checkbox v-model="temp.tiaoji5">服从调剂</el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="第六志愿：  学校" prop="name">
+              <el-select v-model="temp.schoolIds[5]" filterable placeholder="请选择" @change="scChange6">
+                <el-option
+                  v-for="item in schoolOptions"
+                  :key="item.id"
+                  :label="item.nickname"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="专业" prop="name">
               <el-select
                 v-model="temp.speciality6"
+                :remote-method="remoteMethod6"
                 filterable
                 remote
                 reserve-keyword
                 placeholder="请输入专业代码"
-                :remote-method="remoteMethod"
                 :loading="specialityLoading"
+                @focus="clearSelect"
               >
                 <el-option
                   v-for="item in specialityOptions"
@@ -205,16 +320,37 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="志愿7" prop="age">
+          <el-col :span="8">
+            <el-form-item label="" prop="name">
+              <el-checkbox v-model="temp.tiaoji6">服从调剂</el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="第七志愿：  学校" prop="name">
+              <el-select v-model="temp.schoolIds[6]" filterable placeholder="请选择" @change="scChange7">
+                <el-option
+                  v-for="item in schoolOptions"
+                  :key="item.id"
+                  :label="item.nickname"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="专业" prop="name">
               <el-select
                 v-model="temp.speciality7"
+                :remote-method="remoteMethod7"
                 filterable
                 remote
                 reserve-keyword
                 placeholder="请输入专业代码"
-                :remote-method="remoteMethod"
                 :loading="specialityLoading"
+                @focus="clearSelect"
               >
                 <el-option
                   v-for="item in specialityOptions"
@@ -225,16 +361,37 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="志愿8" prop="age">
+          <el-col :span="8">
+            <el-form-item label="" prop="name">
+              <el-checkbox v-model="temp.tiaoji7">服从调剂</el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="第八志愿：  学校" prop="name">
+              <el-select v-model="temp.schoolIds[7]" filterable placeholder="请选择" @change="scChange8">
+                <el-option
+                  v-for="item in schoolOptions"
+                  :key="item.id"
+                  :label="item.nickname"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="专业" prop="name">
               <el-select
                 v-model="temp.speciality8"
+                :remote-method="remoteMethod8"
                 filterable
                 remote
                 reserve-keyword
                 placeholder="请输入专业代码"
-                :remote-method="remoteMethod"
                 :loading="specialityLoading"
+                @focus="clearSelect"
               >
                 <el-option
                   v-for="item in specialityOptions"
@@ -245,19 +402,37 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="8">
+            <el-form-item label="" prop="name">
+              <el-checkbox v-model="temp.tiaoji8">服从调剂</el-checkbox>
+            </el-form-item>
+          </el-col>
         </el-row>
 
         <el-row>
-          <el-col :span="6">
-            <el-form-item label="志愿9" prop="name">
+          <el-col :span="8">
+            <el-form-item label="第九志愿：  学校" prop="name">
+              <el-select v-model="temp.schoolIds[8]" filterable placeholder="请选择" @change="scChange9">
+                <el-option
+                  v-for="item in schoolOptions"
+                  :key="item.id"
+                  :label="item.nickname"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="专业" prop="name">
               <el-select
                 v-model="temp.speciality9"
+                :remote-method="remoteMethod9"
                 filterable
                 remote
                 reserve-keyword
                 placeholder="请输入专业代码"
-                :remote-method="remoteMethod"
                 :loading="specialityLoading"
+                @focus="clearSelect"
               >
                 <el-option
                   v-for="item in specialityOptions"
@@ -268,79 +443,160 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="志愿10" prop="tel">
-              <el-select
-                v-model="temp.speciality10"
-                filterable
-                remote
-                reserve-keyword
-                placeholder="请输入专业代码"
-                :remote-method="remoteMethod"
-                :loading="specialityLoading"
-              >
-                <el-option
-                  v-for="item in specialityOptions"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="志愿11" prop="age">
-              <el-select
-                v-model="temp.speciality11"
-                filterable
-                remote
-                reserve-keyword
-                placeholder="请输入专业代码"
-                :remote-method="remoteMethod"
-                :loading="specialityLoading"
-              >
-                <el-option
-                  v-for="item in specialityOptions"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="志愿12" prop="age">
-              <el-select
-                v-model="temp.speciality12"
-                filterable
-                remote
-                reserve-keyword
-                placeholder="请输入专业代码"
-                :remote-method="remoteMethod"
-                :loading="specialityLoading"
-              >
-                <el-option
-                  v-for="item in specialityOptions"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </el-select>
+          <el-col :span="8">
+            <el-form-item label="" prop="name">
+              <el-checkbox v-model="temp.tiaoji9">服从调剂</el-checkbox>
             </el-form-item>
           </el-col>
         </el-row>
 
         <el-row>
-          <el-col :span="6">
-            <el-form-item label="志愿13" prop="name">
+          <el-col :span="8">
+            <el-form-item label="第十志愿：  学校" prop="name">
+              <el-select v-model="temp.schoolIds[9]" filterable placeholder="请选择" @change="scChange10">
+                <el-option
+                  v-for="item in schoolOptions"
+                  :key="item.id"
+                  :label="item.nickname"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="专业" prop="name">
+              <el-select
+                v-model="temp.speciality10"
+                :remote-method="remoteMethod10"
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请输入专业代码"
+                :loading="specialityLoading"
+                @focus="clearSelect"
+              >
+                <el-option
+                  v-for="item in specialityOptions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="" prop="name">
+              <el-checkbox v-model="temp.tiaoji10">服从调剂</el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="第11志愿：  学校" prop="name">
+              <el-select v-model="temp.schoolIds[10]" filterable placeholder="请选择" @change="scChange11">
+                <el-option
+                  v-for="item in schoolOptions"
+                  :key="item.id"
+                  :label="item.nickname"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="专业" prop="name">
+              <el-select
+                v-model="temp.speciality11"
+                :remote-method="remoteMethod11"
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请输入专业代码"
+                :loading="specialityLoading"
+                @focus="clearSelect"
+              >
+                <el-option
+                  v-for="item in specialityOptions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="" prop="name">
+              <el-checkbox v-model="temp.tiaoji11">服从调剂</el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="第12志愿：  学校" prop="name">
+              <el-select v-model="temp.schoolIds[11]" filterable placeholder="请选择" @change="scChange12">
+                <el-option
+                  v-for="item in schoolOptions"
+                  :key="item.id"
+                  :label="item.nickname"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="专业" prop="name">
+              <el-select
+                v-model="temp.speciality12"
+                :remote-method="remoteMethod12"
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请输入专业代码"
+                :loading="specialityLoading"
+                @focus="clearSelect"
+              >
+                <el-option
+                  v-for="item in specialityOptions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="" prop="name">
+              <el-checkbox v-model="temp.tiaoji12">服从调剂</el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="第13志愿：  学校" prop="name">
+              <el-select v-model="temp.schoolIds[12]" filterable placeholder="请选择" @change="scChange13">
+                <el-option
+                  v-for="item in schoolOptions"
+                  :key="item.id"
+                  :label="item.nickname"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="专业" prop="name">
               <el-select
                 v-model="temp.speciality13"
+                :remote-method="remoteMethod13"
                 filterable
                 remote
                 reserve-keyword
                 placeholder="请输入专业代码"
-                :remote-method="remoteMethod"
                 :loading="specialityLoading"
+                @focus="clearSelect"
               >
                 <el-option
                   v-for="item in specialityOptions"
@@ -351,16 +607,37 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="志愿14" prop="tel">
+          <el-col :span="8">
+            <el-form-item label="" prop="name">
+              <el-checkbox v-model="temp.tiaoji13">服从调剂</el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="第14志愿：  学校" prop="name">
+              <el-select v-model="temp.schoolIds[13]" filterable placeholder="请选择" @change="scChange14">
+                <el-option
+                  v-for="item in schoolOptions"
+                  :key="item.id"
+                  :label="item.nickname"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="专业" prop="name">
               <el-select
                 v-model="temp.speciality14"
+                :remote-method="remoteMethod14"
                 filterable
                 remote
                 reserve-keyword
                 placeholder="请输入专业代码"
-                :remote-method="remoteMethod"
                 :loading="specialityLoading"
+                @focus="clearSelect"
               >
                 <el-option
                   v-for="item in specialityOptions"
@@ -371,16 +648,37 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="志愿15" prop="age">
+          <el-col :span="8">
+            <el-form-item label="" prop="name">
+              <el-checkbox v-model="temp.tiaoji14">服从调剂</el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="第15志愿：  学校" prop="name">
+              <el-select v-model="temp.schoolIds[14]" filterable placeholder="请选择" @change="scChange15">
+                <el-option
+                  v-for="item in schoolOptions"
+                  :key="item.id"
+                  :label="item.nickname"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="专业" prop="name">
               <el-select
                 v-model="temp.speciality15"
+                :remote-method="remoteMethod15"
                 filterable
                 remote
                 reserve-keyword
                 placeholder="请输入专业代码"
-                :remote-method="remoteMethod"
                 :loading="specialityLoading"
+                @focus="clearSelect"
               >
                 <el-option
                   v-for="item in specialityOptions"
@@ -391,16 +689,37 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="志愿16" prop="age">
+          <el-col :span="8">
+            <el-form-item label="" prop="name">
+              <el-checkbox v-model="temp.tiaoji15">服从调剂</el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="第16志愿：  学校" prop="name">
+              <el-select v-model="temp.schoolIds[15]" filterable placeholder="请选择" @change="scChange16">
+                <el-option
+                  v-for="item in schoolOptions"
+                  :key="item.id"
+                  :label="item.nickname"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="专业" prop="name">
               <el-select
                 v-model="temp.speciality16"
+                :remote-method="remoteMethod16"
                 filterable
                 remote
                 reserve-keyword
                 placeholder="请输入专业代码"
-                :remote-method="remoteMethod"
                 :loading="specialityLoading"
+                @focus="clearSelect"
               >
                 <el-option
                   v-for="item in specialityOptions"
@@ -411,96 +730,183 @@
               </el-select>
             </el-form-item>
           </el-col>
-
-          <el-row>
-            <el-col :span="6">
-              <el-form-item label="志愿17" prop="name">
-                <el-select
-                  v-model="temp.speciality17"
-                  filterable
-                  remote
-                  reserve-keyword
-                  placeholder="请输入专业代码"
-                  :remote-method="remoteMethod"
-                  :loading="specialityLoading"
-                >
-                  <el-option
-                    v-for="item in specialityOptions"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="志愿18" prop="tel">
-                <el-select
-                  v-model="temp.speciality18"
-                  filterable
-                  remote
-                  reserve-keyword
-                  placeholder="请输入专业代码"
-                  :remote-method="remoteMethod"
-                  :loading="specialityLoading"
-                >
-                  <el-option
-                    v-for="item in specialityOptions"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="志愿19" prop="age">
-                <el-select
-                  v-model="temp.speciality19"
-                  filterable
-                  remote
-                  reserve-keyword
-                  placeholder="请输入专业代码"
-                  :remote-method="remoteMethod"
-                  :loading="specialityLoading"
-                >
-                  <el-option
-                    v-for="item in specialityOptions"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="志愿20" prop="age">
-                <el-select
-                  v-model="temp.speciality20"
-                  filterable
-                  remote
-                  reserve-keyword
-                  placeholder="请输入专业代码"
-                  :remote-method="remoteMethod"
-                  :loading="specialityLoading"
-                >
-                  <el-option
-                    v-for="item in specialityOptions"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
+          <el-col :span="8">
+            <el-form-item label="" prop="name">
+              <el-checkbox v-model="temp.tiaoji16">服从调剂</el-checkbox>
+            </el-form-item>
+          </el-col>
         </el-row>
+
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="第17志愿：  学校" prop="name">
+              <el-select v-model="temp.schoolIds[16]" filterable placeholder="请选择" @change="scChange17">
+                <el-option
+                  v-for="item in schoolOptions"
+                  :key="item.id"
+                  :label="item.nickname"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="专业" prop="name">
+              <el-select
+                v-model="temp.speciality17"
+                :remote-method="remoteMethod17"
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请输入专业代码"
+                :loading="specialityLoading"
+                @focus="clearSelect"
+              >
+                <el-option
+                  v-for="item in specialityOptions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="" prop="name">
+              <el-checkbox v-model="temp.tiaoji17">服从调剂</el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="第18志愿：  学校" prop="name">
+              <el-select v-model="temp.schoolIds[17]" filterable placeholder="请选择" @change="scChange18">
+                <el-option
+                  v-for="item in schoolOptions"
+                  :key="item.id"
+                  :label="item.nickname"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="专业" prop="name">
+              <el-select
+                v-model="temp.speciality18"
+                :remote-method="remoteMethod18"
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请输入专业代码"
+                :loading="specialityLoading"
+                @focus="clearSelect"
+              >
+                <el-option
+                  v-for="item in specialityOptions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="" prop="name">
+              <el-checkbox v-model="temp.tiaoji18">服从调剂</el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="第19志愿：  学校" prop="name">
+              <el-select v-model="temp.schoolIds[18]" filterable placeholder="请选择" @change="scChange19">
+                <el-option
+                  v-for="item in schoolOptions"
+                  :key="item.id"
+                  :label="item.nickname"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="专业" prop="name">
+              <el-select
+                v-model="temp.speciality19"
+                :remote-method="remoteMethod19"
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请输入专业代码"
+                :loading="specialityLoading"
+                @focus="clearSelect"
+              >
+                <el-option
+                  v-for="item in specialityOptions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="" prop="name">
+              <el-checkbox v-model="temp.tiaoji19">服从调剂</el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="第20志愿：  学校" prop="name">
+              <el-select v-model="temp.schoolIds[19]" filterable placeholder="请选择" @change="scChange20">
+                <el-option
+                  v-for="item in schoolOptions"
+                  :key="item.id"
+                  :label="item.nickname"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="专业" prop="name">
+              <el-select
+                v-model="temp.speciality20"
+                :remote-method="remoteMethod20"
+                filterable
+                remote
+                reserve-keyword
+                placeholder="请输入专业代码"
+                :loading="specialityLoading"
+                @focus="clearSelect"
+              >
+                <el-option
+                  v-for="item in specialityOptions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="" prop="name">
+              <el-checkbox v-model="temp.tiaoji20">服从调剂</el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
-          取消
+          关闭
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+        <el-button :style="{ display: visibleSave }" type="primary" @click="dialogStatus==='create'?createData():updateData()">
           保存
         </el-button>
       </div>
@@ -509,10 +915,10 @@
 </template>
 
 <script>
-import { fetchList, updateOne, submit } from '@/api/voluntary'
+import { fetchList, updateOne, submit, info } from '@/api/voluntary'
 import { fetchOne } from '@/api/speciality'
+import { getSchools } from '@/api/user'
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
 import lodash from 'lodash'
 
 export default {
@@ -535,7 +941,11 @@ export default {
       listLoading: true,
       multipleSelection: [],
       specialityOptions: [],
+      schoolOptions: [],
       specialityLoading: false,
+      visibleSee: 'none',
+      visibleEdit: 'block',
+      visibleSave: 'inline',
       listQuery: {
         limit: {
           page: 1,
@@ -555,9 +965,31 @@ export default {
         startTime: '',
         endTime: ''
       },
+      school1: undefined,
       temp: {
+        schoolIds: [],
         id: '',
-        speciality1: '4',
+        tiaoji1: false,
+        tiaoji2: false,
+        tiaoji3: false,
+        tiaoji4: false,
+        tiaoji5: false,
+        tiaoji6: false,
+        tiaoji7: false,
+        tiaoji8: false,
+        tiaoji9: false,
+        tiaoji10: false,
+        tiaoji11: false,
+        tiaoji12: false,
+        tiaoji13: false,
+        tiaoji14: false,
+        tiaoji15: false,
+        tiaoji16: false,
+        tiaoji17: false,
+        tiaoji18: false,
+        tiaoji19: false,
+        tiaoji20: false,
+        speciality1: '',
         speciality2: '',
         speciality3: '',
         speciality4: '',
@@ -583,7 +1015,7 @@ export default {
       dialogStatus: '',
       textMap: {
         update: '编辑志愿',
-        create: '添加'
+        create: '查看志愿'
       },
       rules: {
         speciality1: [{ required: true, message: '志愿1必填', trigger: 'blur' }]
@@ -605,27 +1037,332 @@ export default {
   },
   methods: {
     handleSubmit() {
-      submit().then(response => {
-        this.$notify({
-          title: '成功',
-          message: '提交成功',
-          type: 'success',
-          duration: 2000
+      this.$confirm('志愿提交以后将无法进行修改, 请确认是否提交?', '提示', {
+        confirmButtonText: '提交',
+        cancelButtonText: '放弃',
+        type: 'warning'
+      }).then(() => {
+        submit().then(response => {
+          this.$notify({
+            title: '成功',
+            message: '提交成功',
+            type: 'success',
+            duration: 2000
+          })
+          this.getList()
+        }).catch(() => {
+          this.$notify({
+            title: '失败',
+            message: '提交失败',
+            type: 'success',
+            duration: 2000
+          })
         })
-        this.getList()
       }).catch(() => {
         this.$notify({
-          title: '失败',
-          message: '提交失败',
+          title: '取消',
+          message: '取消提交',
           type: 'success',
           duration: 2000
         })
       })
     },
-    remoteMethod(query) {
+    clearSelect() {
+      this.specialityOptions = []
+    },
+    scChange1() {
+      this.specialityOptions = []
+      this.temp.speciality1 = undefined
+    },
+    remoteMethod1(query) {
       if (query !== '') {
         this.specialityLoading = true
-        fetchOne(query).then(response => {
+        fetchOne(query, this.temp.schoolIds[0]).then(response => {
+          this.specialityLoading = false
+          this.specialityOptions = response.data
+        })
+      } else {
+        this.specialityOptions = []
+      }
+    },
+    scChange2() {
+      this.specialityOptions = []
+      this.temp.speciality2 = undefined
+    },
+    remoteMethod2(query) {
+      if (query !== '') {
+        this.specialityLoading = true
+        fetchOne(query, this.temp.schoolIds[1]).then(response => {
+          this.specialityLoading = false
+          this.specialityOptions = response.data
+        })
+      } else {
+        this.specialityOptions = []
+      }
+    },
+    scChange3() {
+      this.specialityOptions = []
+      this.temp.speciality3 = undefined
+    },
+    remoteMethod3(query) {
+      if (query !== '') {
+        this.specialityLoading = true
+        fetchOne(query, this.temp.schoolIds[2]).then(response => {
+          this.specialityLoading = false
+          this.specialityOptions = response.data
+        })
+      } else {
+        this.specialityOptions = []
+      }
+    },
+    scChange4() {
+      this.specialityOptions = []
+      this.temp.speciality4 = undefined
+    },
+    remoteMethod4(query) {
+      if (query !== '') {
+        this.specialityLoading = true
+        fetchOne(query, this.temp.schoolIds[3]).then(response => {
+          this.specialityLoading = false
+          this.specialityOptions = response.data
+        })
+      } else {
+        this.specialityOptions = []
+      }
+    },
+    scChange5() {
+      this.specialityOptions = []
+      this.temp.speciality5 = undefined
+    },
+    remoteMethod5(query) {
+      if (query !== '') {
+        this.specialityLoading = true
+        fetchOne(query, this.temp.schoolIds[6]).then(response => {
+          this.specialityLoading = false
+          this.specialityOptions = response.data
+        })
+      } else {
+        this.specialityOptions = []
+      }
+    },
+    scChange6() {
+      this.specialityOptions = []
+      this.temp.speciality6 = undefined
+    },
+    remoteMethod6(query) {
+      if (query !== '') {
+        this.specialityLoading = true
+        fetchOne(query, this.temp.schoolIds[5]).then(response => {
+          this.specialityLoading = false
+          this.specialityOptions = response.data
+        })
+      } else {
+        this.specialityOptions = []
+      }
+    },
+    scChange7() {
+      this.specialityOptions = []
+      this.temp.speciality7 = undefined
+    },
+    remoteMethod7(query) {
+      if (query !== '') {
+        this.specialityLoading = true
+        fetchOne(query, this.temp.schoolIds[6]).then(response => {
+          this.specialityLoading = false
+          this.specialityOptions = response.data
+        })
+      } else {
+        this.specialityOptions = []
+      }
+    },
+    scChange8() {
+      this.specialityOptions = []
+      this.temp.speciality8 = undefined
+    },
+    remoteMethod8(query) {
+      if (query !== '') {
+        this.specialityLoading = true
+        fetchOne(query, this.temp.schoolIds[7]).then(response => {
+          this.specialityLoading = false
+          this.specialityOptions = response.data
+        })
+      } else {
+        this.specialityOptions = []
+      }
+    },
+    scChange9() {
+      this.specialityOptions = []
+      this.temp.speciality9 = undefined
+    },
+    remoteMethod9(query) {
+      if (query !== '') {
+        this.specialityLoading = true
+        fetchOne(query, this.temp.schoolIds[8]).then(response => {
+          this.specialityLoading = false
+          this.specialityOptions = response.data
+        })
+      } else {
+        this.specialityOptions = []
+      }
+    },
+    scChange10() {
+      this.specialityOptions = []
+      this.temp.speciality10 = undefined
+    },
+    remoteMethod10(query) {
+      if (query !== '') {
+        this.specialityLoading = true
+        fetchOne(query, this.temp.schoolIds[9]).then(response => {
+          this.specialityLoading = false
+          this.specialityOptions = response.data
+        })
+      } else {
+        this.specialityOptions = []
+      }
+    },
+    scChange11() {
+      this.specialityOptions = []
+      this.temp.speciality11 = undefined
+    },
+    remoteMethod11(query) {
+      if (query !== '') {
+        this.specialityLoading = true
+        fetchOne(query, this.temp.schoolIds[10]).then(response => {
+          this.specialityLoading = false
+          this.specialityOptions = response.data
+        })
+      } else {
+        this.specialityOptions = []
+      }
+    },
+    scChange12() {
+      this.specialityOptions = []
+      this.temp.speciality12 = undefined
+    },
+    remoteMethod12(query) {
+      if (query !== '') {
+        this.specialityLoading = true
+        fetchOne(query, this.temp.schoolIds[11]).then(response => {
+          this.specialityLoading = false
+          this.specialityOptions = response.data
+        })
+      } else {
+        this.specialityOptions = []
+      }
+    },
+    scChange13() {
+      this.specialityOptions = []
+      this.temp.speciality13 = undefined
+    },
+    remoteMethod13(query) {
+      if (query !== '') {
+        this.specialityLoading = true
+        fetchOne(query, this.temp.schoolIds[12]).then(response => {
+          this.specialityLoading = false
+          this.specialityOptions = response.data
+        })
+      } else {
+        this.specialityOptions = []
+      }
+    },
+    scChange14() {
+      this.specialityOptions = []
+      this.temp.speciality14 = undefined
+    },
+    remoteMethod14(query) {
+      if (query !== '') {
+        this.specialityLoading = true
+        fetchOne(query, this.temp.schoolIds[13]).then(response => {
+          this.specialityLoading = false
+          this.specialityOptions = response.data
+        })
+      } else {
+        this.specialityOptions = []
+      }
+    },
+    scChange15() {
+      this.specialityOptions = []
+      this.temp.speciality15 = undefined
+    },
+    remoteMethod15(query) {
+      if (query !== '') {
+        this.specialityLoading = true
+        fetchOne(query, this.temp.schoolIds[14]).then(response => {
+          this.specialityLoading = false
+          this.specialityOptions = response.data
+        })
+      } else {
+        this.specialityOptions = []
+      }
+    },
+    scChange16() {
+      this.specialityOptions = []
+      this.temp.speciality16 = undefined
+    },
+    remoteMethod16(query) {
+      if (query !== '') {
+        this.specialityLoading = true
+        fetchOne(query, this.temp.schoolIds[15]).then(response => {
+          this.specialityLoading = false
+          this.specialityOptions = response.data
+        })
+      } else {
+        this.specialityOptions = []
+      }
+    },
+    scChange17() {
+      this.specialityOptions = []
+      this.temp.speciality17 = undefined
+    },
+    remoteMethod17(query) {
+      if (query !== '') {
+        this.specialityLoading = true
+        fetchOne(query, this.temp.schoolIds[16]).then(response => {
+          this.specialityLoading = false
+          this.specialityOptions = response.data
+        })
+      } else {
+        this.specialityOptions = []
+      }
+    },
+    scChange18() {
+      this.specialityOptions = []
+      this.temp.speciality18 = undefined
+    },
+    remoteMethod18(query) {
+      if (query !== '') {
+        this.specialityLoading = true
+        fetchOne(query, this.temp.schoolIds[17]).then(response => {
+          this.specialityLoading = false
+          this.specialityOptions = response.data
+        })
+      } else {
+        this.specialityOptions = []
+      }
+    },
+    scChange19() {
+      this.specialityOptions = []
+      this.temp.speciality19 = undefined
+    },
+    remoteMethod19(query) {
+      if (query !== '') {
+        this.specialityLoading = true
+        fetchOne(query, this.temp.schoolIds[18]).then(response => {
+          this.specialityLoading = false
+          this.specialityOptions = response.data
+        })
+      } else {
+        this.specialityOptions = []
+      }
+    },
+    scChange20() {
+      this.specialityOptions = []
+      this.temp.speciality20 = undefined
+    },
+    remoteMethod20(query) {
+      if (query !== '') {
+        this.specialityLoading = true
+        fetchOne(query, this.temp.schoolIds[19]).then(response => {
           this.specialityLoading = false
           this.specialityOptions = response.data
         })
@@ -637,8 +1374,21 @@ export default {
     handleUpdate(row) {
       // this.temp = Object.assign({}, this.temp, row)
       this.resetTemp()
-      this.temp = lodash.assign(this.temp, lodash.pick(row, lodash.keys(this.temp)))
+      // this.temp = lodash.assign(this.temp, lodash.pick(row, lodash.keys(this.temp)));
+      info(row.userId).then(response => {
+        this.temp = response.data
+      })
       this.dialogStatus = 'update'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    handleSee(row) {
+      // this.temp = Object.assign({}, this.temp, row)
+      this.resetTemp()
+      this.temp = lodash.assign(this.temp, lodash.pick(row, lodash.keys(this.temp)))
+      this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
@@ -669,6 +1419,21 @@ export default {
         this.list = response.data.items
         this.total = Number(response.data.total)
         this.listLoading = false
+        if (response.data.items[0].status === '未填报' || response.data.items[0].status === '已填报') {
+          this.visibleEdit = 'inline'
+          this.visibleSee = 'none'
+          this.visibleSave = 'inline'
+        } else {
+          this.visibleEdit = 'none'
+          this.visibleSee = 'inline'
+          this.visibleSave = 'none'
+        }
+      })
+      fetchOne(0, 0).then(response => {
+        this.specialityOptions = response.data
+      })
+      getSchools().then(response => {
+        this.schoolOptions = response.data
       })
     },
     // 排序触发事件
@@ -729,29 +1494,6 @@ export default {
           this.$refs.multipleTable.toggleRowSelection(row)
         })
       }
-    },
-    handleDownload() {
-      this.downloadLoading = true
-        import('@/vendor/Export2Excel').then(excel => {
-          const tHeader = ['id', '姓名', '电话', '性别', '微信添加', '微信号', '来源', '标记', '消费能力', '消费行为', '口感喜好', '消费需求', '备注', '更新日期']
-          const filterVal = ['id', 'name', 'tel', 'genderTitle', 'vxAddTitle', 'vx', 'originTitle', 'markTitle', 'powerTitle', 'behaviors', 'likes', 'demands', 'remark', 'updateTime']
-          const data = this.formatJson(filterVal, this.list)
-          excel.export_json_to_excel({
-            header: tHeader,
-            data,
-            filename: 'voluntaryList'
-          })
-          this.downloadLoading = false
-        })
-    },
-    formatJson(filterVal, jsonData) {
-      return jsonData.map(v => filterVal.map(j => {
-        if (j === 'updateTime') {
-          return parseTime(v[j])
-        } else {
-          return v[j]
-        }
-      }))
     }
   }
 }

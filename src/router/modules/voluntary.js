@@ -10,7 +10,7 @@ const voluntaryRouter = {
   meta: {
     title: '志愿填报',
     icon: 'table',
-    roles: ['admin', 'vip']
+    roles: ['student', 'base']
   },
   children: [
     {
