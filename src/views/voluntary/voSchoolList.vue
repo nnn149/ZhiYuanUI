@@ -1,34 +1,84 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-
+      <el-select v-model="listQuery.voluntary" class="filter-item" filterable placeholder="选择志愿">
+        <el-option label="第1志愿" value="1">
+          第1志愿
+        </el-option>
+        <el-option label="第2志愿" value="2">
+          第2志愿
+        </el-option>
+        <el-option label="第3志愿" value="3">
+          第3志愿
+        </el-option>
+        <el-option label="第4志愿" value="4">
+          第4志愿
+        </el-option>
+        <el-option label="第5志愿" value="5">
+          第5志愿
+        </el-option>
+        <el-option label="第6志愿" value="6">
+          第6志愿
+        </el-option>
+        <el-option label="第7志愿" value="7">
+          第7志愿
+        </el-option>
+        <el-option label="第8志愿" value="8">
+          第8志愿
+        </el-option>
+        <el-option label="第9志愿" value="9">
+          第9志愿
+        </el-option>
+        <el-option label="第10志愿" value="10">
+          第10志愿
+        </el-option>
+        <el-option label="第11志愿" value="11">
+          第11志愿
+        </el-option>
+        <el-option label="第12志愿" value="12">
+          第12志愿
+        </el-option>
+        <el-option label="第13志愿" value="13">
+          第13志愿
+        </el-option>
+        <el-option label="第14志愿" value="14">
+          第14志愿
+        </el-option>
+        <el-option label="第15志愿" value="15">
+          第15志愿
+        </el-option>
+        <el-option label="第16志愿" value="16">
+          第16志愿
+        </el-option>
+        <el-option label="第17志愿" value="17">
+          第17志愿
+        </el-option>
+        <el-option label="第18志愿" value="18">
+          第18志愿
+        </el-option>
+        <el-option label="第19志愿" value="19">
+          第19志愿
+        </el-option>
+        <el-option label="第20志愿" value="20">
+          第20志愿
+        </el-option>
+      </el-select>
+      <el-select v-model="listQuery.speciality" class="filter-item" filterable placeholder="选择专业">
+        <el-option
+          v-for="item in specialityOptions"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
+        />
+      </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
-      <el-button
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="primary"
-        icon="el-icon-edit"
-        @click="handleCreate"
-      >
-        添加
-      </el-button>
-      <el-button
-        v-waves
-        class="filter-item"
-        type="danger"
-        icon="el-icon-delete"
-        @click="deleteDatas"
-      >
-        删除
-      </el-button>
+
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         导出
       </el-button>
-      <el-button v-waves class="filter-item" type="primary" @click="toggleAllSelection(list)">
-        反选
-      </el-button>
+
     </div>
 
     <el-table
@@ -60,89 +110,70 @@
       </el-table-column>
       <el-table-column label="姓名" width="80px" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.name }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.nickname }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="电话" min-width="110px">
+      <el-table-column label="身份证号" min-width="110px">
         <template slot-scope="scope">
-          <span>{{ scope.row.tel }}</span>
+          <span>{{ scope.row.username }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="性别" min-width="60px">
+      <el-table-column label="数学成绩" min-width="40px">
         <template slot-scope="scope">
-          <span>{{ scope.row.genderTitle }}</span>
+          <span>{{ scope.row.mathScore }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="微信添加" min-width="50px">
+      <el-table-column label="英语成绩" min-width="40px">
         <template slot-scope="scope">
-          <span>{{ scope.row.vxAddTitle }}</span>
+          <span>{{ scope.row.englishScore }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="微信号" min-width="80px">
+      <el-table-column label="专业成绩" min-width="40px">
         <template slot-scope="scope">
-          <span>{{ scope.row.vx }}</span>
+          <span>{{ scope.row.majorScore }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="来源" min-width="60px">
+      <el-table-column label="总分" min-width="40px">
         <template slot-scope="scope">
-          <span>{{ scope.row.originTitle }}</span>
+          <span>{{ scope.row.totalScore }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="标记" min-width="60px">
+      <el-table-column label="排名" min-width="60px">
         <template slot-scope="scope">
-          <span>{{ scope.row.markTitle }}</span>
+          <span>{{ scope.row.rank }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="消费能力" min-width="60px">
-        <template slot-scope="scope">
-          <span>{{ scope.row.powerTitle }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="消费行为" min-width="60px">
-        <template slot-scope="scope">
-          <span>{{ scope.row.behaviors }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="口感喜好" min-width="60px">
-        <template slot-scope="scope">
-          <span>{{ scope.row.likes }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="消费需求" min-width="60px">
-        <template slot-scope="scope">
-          <span>{{ scope.row.demands }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="所属客服" min-width="80px">
-        <template slot-scope="scope">
-          <span>{{ scope.row.voSchoolServiceNickname }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="备注" min-width="150px">
+      <el-table-column label="备注" min-width="60px">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
-
-      <el-table-column
-        label="更新日期"
-        width="140px"
-        align="center"
-        prop="updateTime"
-        sortable="custom"
-        :class-name="getSortClass('updateTime')"
-      >
+      <el-table-column label="填报专业" min-width="60px">
         <template slot-scope="scope">
-          <span>{{ scope.row.updateTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ scope.row.speciality }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
+      <el-table-column label="志愿批次" min-width="60px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.zhiyuan }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="服从调剂" min-width="60px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.tiaoji | boolFormat }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="操作" align="center" width="250" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            编辑
+            预录取
+          </el-button>
+          <el-button v-if="row.tiaoji" type="primary" size="mini" @click="handleUpdate(row)">
+            调剂
           </el-button>
           <el-button size="mini" type="danger" @click="deleteData(row.id)">
-            删除
+            拒绝
           </el-button>
         </template>
       </el-table-column>
@@ -271,7 +302,8 @@
 </template>
 
 <script>
-import { fetchList, deleteOne, createOne, updateOne, deleteList } from '@/api/voSchool'
+import { schoolList } from '@/api/voluntary'
+import { infoByUserId } from '@/api/speciality'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -291,6 +323,13 @@ export default {
         deleted: 'danger'
       }
       return statusMap[status]
+    },
+    boolFormat: function(val) {
+      if (val === true) {
+        return '是'
+      } else {
+        return '否'
+      }
     }
   },
   data() {
@@ -299,24 +338,15 @@ export default {
       total: 0,
       listLoading: true,
       multipleSelection: [],
+      specialityOptions: [],
       listQuery: {
         limit: {
           page: 1,
           limit: 20,
           sort: '+updateTime'
         },
-        name: undefined,
-        tel: undefined,
-        gender: '0',
-        vxAdd: '0',
-        origin: '0',
-        mark: '0',
-        power: '0',
-        behaviorId: '0',
-        likeId: '0',
-        demandId: '0',
-        startTime: '',
-        endTime: ''
+        speciality: undefined,
+        voluntary: '1'
       },
       temp: {
         id: '',
@@ -386,82 +416,14 @@ export default {
     }
   },
   created() {
+    infoByUserId(0).then(response => {
+      this.specialityOptions = response.data
+    })
     this.getList()
     this.initTemp = lodash.cloneDeep(this.temp)
   },
   methods: {
 
-    // 添加一条数据
-    createData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          createOne(this.temp).then(() => {
-            this.handleFilter()
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '成功',
-              message: '添加成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
-    },
-    // 根据id删除
-    deleteData(id) {
-      this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        deleteOne(id).then(response => {
-          this.$notify({
-            title: '成功',
-            message: '删除成功',
-            type: 'success',
-            duration: 2000
-          })
-          this.getList()
-        })
-      }).catch(() => {
-        this.$notify({
-          title: '取消',
-          message: '取消删除',
-          type: 'success',
-          duration: 2000
-        })
-      })
-    },
-    // 批量删除
-    deleteDatas() {
-      if (this.multipleSelection.length < 1) {
-        return
-      }
-      this.$confirm('此操作将永久删除这' + this.multipleSelection.length + '条记录, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        const ids = this.multipleSelection.map(item => item.id)
-        deleteList(ids).then(response => {
-          this.$notify({
-            title: '成功',
-            message: '删除成功',
-            type: 'success',
-            duration: 2000
-          })
-          this.getList()
-        })
-      }).catch(() => {
-        this.$notify({
-          title: '取消',
-          message: '取消删除',
-          type: 'success',
-          duration: 2000
-        })
-      })
-    },
     // 处理表单更新前数据
     handleUpdate(row) {
       // this.temp = Object.assign({}, this.temp, row)
@@ -473,28 +435,10 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
-    // 根据表单更新数据
-    updateData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          updateOne(tempData).then(() => {
-            this.handleFilter()
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '成功',
-              message: '修改成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
-    },
     // 获取列表
     getList() {
       this.listLoading = true
-      fetchList(this.listQuery).then(response => {
+      schoolList(this.listQuery).then(response => {
         this.list = response.data.items
         this.total = Number(response.data.total)
         this.listLoading = false

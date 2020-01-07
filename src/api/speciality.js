@@ -15,3 +15,11 @@ export function fetchOne(id, userId) {
     params: { id, userId }
   })
 }
+
+export function infoByUserId(userId) {
+  return request({
+    url: '/speciality?method=infoByUserId',
+    method: 'get',
+    params: { userId }
+  })
+}

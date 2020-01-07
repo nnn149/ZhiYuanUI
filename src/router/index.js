@@ -9,6 +9,7 @@ import Layout from '@/layout'
 /* Router Modules */
 import voluntaryRouter from './modules/voluntary'
 import studentRouter from './modules/student'
+import schoolRouter from './modules/school'
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -104,7 +105,7 @@ export const asyncRoutes = [
   /** when your routing map is too long, you can split it into small modules **/
   studentRouter,
   voluntaryRouter,
-
+  schoolRouter,
   {
     path: '/theme',
     component: Layout,

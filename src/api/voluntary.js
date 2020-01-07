@@ -16,6 +16,14 @@ export function updateOne(data) {
   })
 }
 
+export function schoolList(data) {
+  return request({
+    url: '/voluntary?method=schoolList',
+    method: 'post',
+    data
+  })
+}
+
 export function submit() {
   return request({
     url: '/voluntary?method=submit',
