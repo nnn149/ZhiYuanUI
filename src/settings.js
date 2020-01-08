@@ -1,5 +1,5 @@
 module.exports = {
-  title: '客户管理系统',
+  title: '志愿填报系统',
 
   /**
    * @type {boolean} true | false
