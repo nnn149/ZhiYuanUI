@@ -24,6 +24,14 @@ export function schoolList(data) {
   })
 }
 
+export function adminList(data) {
+  return request({
+    url: '/voluntary?method=adminList',
+    method: 'post',
+    data
+  })
+}
+
 export function submit() {
   return request({
     url: '/voluntary?method=submit',
@@ -36,6 +44,38 @@ export function info(userId) {
     url: '/voluntary?method=info',
     method: 'get',
     params: { userId }
+  })
+}
+
+export function reject(id) {
+  return request({
+    url: '/voluntary?method=reject',
+    method: 'get',
+    params: { id }
+  })
+}
+
+export function pizhun(id) {
+  return request({
+    url: '/voluntary?method=pizhun',
+    method: 'get',
+    params: { id }
+  })
+}
+
+export function tiaoji(id, specialityId) {
+  return request({
+    url: '/voluntary?method=tiaoji',
+    method: 'get',
+    params: { id, specialityId }
+  })
+}
+
+export function preAdmission(id) {
+  return request({
+    url: '/voluntary?method=preAdmission',
+    method: 'get',
+    params: { id }
   })
 }
 
@@ -85,12 +125,14 @@ export function getPowerNum() {
     method: 'get'
   })
 }
+
 export function getSaleData() {
   return request({
     url: '/voluntary/getSaleData',
     method: 'get'
   })
 }
+
 export function getLineChartData() {
   return request({
     url: '/voluntary/getLineChartData',

@@ -1,67 +1,13 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-select v-model="listQuery.voluntary" class="filter-item" filterable placeholder="选择志愿">
-        <el-option label="第1志愿" value="1">
-          第1志愿
-        </el-option>
-        <el-option label="第2志愿" value="2">
-          第2志愿
-        </el-option>
-        <el-option label="第3志愿" value="3">
-          第3志愿
-        </el-option>
-        <el-option label="第4志愿" value="4">
-          第4志愿
-        </el-option>
-        <el-option label="第5志愿" value="5">
-          第5志愿
-        </el-option>
-        <el-option label="第6志愿" value="6">
-          第6志愿
-        </el-option>
-        <el-option label="第7志愿" value="7">
-          第7志愿
-        </el-option>
-        <el-option label="第8志愿" value="8">
-          第8志愿
-        </el-option>
-        <el-option label="第9志愿" value="9">
-          第9志愿
-        </el-option>
-        <el-option label="第10志愿" value="10">
-          第10志愿
-        </el-option>
-        <el-option label="第11志愿" value="11">
-          第11志愿
-        </el-option>
-        <el-option label="第12志愿" value="12">
-          第12志愿
-        </el-option>
-        <el-option label="第13志愿" value="13">
-          第13志愿
-        </el-option>
-        <el-option label="第14志愿" value="14">
-          第14志愿
-        </el-option>
-        <el-option label="第15志愿" value="15">
-          第15志愿
-        </el-option>
-        <el-option label="第16志愿" value="16">
-          第16志愿
-        </el-option>
-        <el-option label="第17志愿" value="17">
-          第17志愿
-        </el-option>
-        <el-option label="第18志愿" value="18">
-          第18志愿
-        </el-option>
-        <el-option label="第19志愿" value="19">
-          第19志愿
-        </el-option>
-        <el-option label="第20志愿" value="20">
-          第20志愿
-        </el-option>
+      <el-select v-model="listQuery.schoolId" filterable placeholder="请选择" @change="shcoolChange">
+        <el-option
+          v-for="item in schoolOptions"
+          :key="item.id"
+          :label="item.nickname"
+          :value="item.id"
+        />
       </el-select>
       <el-select v-model="listQuery.speciality" class="filter-item" filterable placeholder="选择专业">
         <el-option label="全部专业" value="0">全部专业</el-option>
@@ -167,14 +113,8 @@
 
       <el-table-column label="操作" align="center" width="250" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button type="primary" size="mini" @click="preAdmissionOne(row.id)">
-            预录取
-          </el-button>
-          <el-button v-if="row.tiaoji" type="primary" size="mini" @click="handleUpdate(row)">
-            调剂
-          </el-button>
-          <el-button size="mini" type="danger" @click="rejectOne(row.id)">
-            拒绝
+          <el-button type="primary" @click="pizhunOne(row.id)">
+            批准
           </el-button>
         </template>
       </el-table-column>
@@ -219,15 +159,16 @@
 </template>
 
 <script>
-import { schoolList, reject, preAdmission, tiaoji } from '@/api/voluntary'
+import { adminList, pizhun } from '@/api/voluntary'
 import { infoByUserId } from '@/api/speciality'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import lodash from 'lodash'
+import { getSchools } from '@/api/user'
 
 export default {
-  name: 'VoSchoolList',
+  name: 'VoAdminList',
   components: { Pagination },
   directives: { waves },
   filters: {
@@ -254,6 +195,7 @@ export default {
       listLoading: true,
       multipleSelection: [],
       specialityOptions: [],
+      schoolOptions: [],
       listQuery: {
         limit: {
           page: 1,
@@ -261,7 +203,7 @@ export default {
           sort: '+updateTime'
         },
         speciality: '0',
-        voluntary: '1'
+        schoolId: 2
       },
       temp: {
         id: '',
@@ -278,33 +220,6 @@ export default {
         type: [{ required: true, message: 'type is required', trigger: 'change' }],
         name: [{ required: true, message: '姓名必填', trigger: 'blur' }]
       },
-      pickerOptions: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
-      },
       insertTimeValue: null,
       downloadLoading: false
     }
@@ -317,14 +232,47 @@ export default {
     }
   },
   created() {
-    infoByUserId(0).then(response => {
-      this.specialityOptions = response.data
-    })
     this.getList()
     this.initTemp = lodash.cloneDeep(this.temp)
   },
   methods: {
 
+    shcoolChange() {
+      infoByUserId(this.listQuery.schoolId).then(response => {
+        this.specialityOptions = response.data
+      })
+    },
+    pizhunOne(id) {
+      this.$confirm('志愿批准以后将无法进行修改, 请确认是否批准?', '提示', {
+        confirmButtonText: '批准',
+        cancelButtonText: '放弃',
+        type: 'warning'
+      }).then(() => {
+        pizhun(id).then(response => {
+          this.$notify({
+            title: '批准',
+            message: '批准成功',
+            type: 'success',
+            duration: 2000
+          })
+          this.getList()
+        }).catch(() => {
+          this.$notify({
+            title: '批准',
+            message: '批准失败',
+            type: 'success',
+            duration: 2000
+          })
+        })
+      }).catch(() => {
+        this.$notify({
+          title: '取消',
+          message: '取消批准',
+          type: 'success',
+          duration: 2000
+        })
+      })
+    },
     // 处理表单更新前数据
     handleUpdate(row) {
       // this.temp = Object.assign({}, this.temp, row)
@@ -339,83 +287,17 @@ export default {
     // 获取列表
     getList() {
       this.listLoading = true
-      schoolList(this.listQuery).then(response => {
+      adminList(this.listQuery).then(response => {
         this.list = response.data.items
         this.total = Number(response.data.total)
         this.listLoading = false
       })
-    },
-    tiaojiOne() {
-      this.$confirm('将调剂此学生, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        tiaoji(this.temp.id, this.temp.specialityId).then(response => {
-          this.$notify({
-            title: '成功',
-            message: '调剂成功',
-            type: 'success',
-            duration: 2000
-          })
-          this.getList()
-          this.dialogFormVisible = false
-        })
-      }).catch(() => {
-        this.$notify({
-          title: '取消',
-          message: '取消调剂',
-          type: 'success',
-          duration: 2000
-        })
+
+      getSchools().then(response => {
+        this.schoolOptions = response.data
       })
-    },
-    rejectOne(id) {
-      this.$confirm('将拒绝录取此学生, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        reject(id).then(response => {
-          this.$notify({
-            title: '拒绝',
-            message: '已拒绝',
-            type: 'success',
-            duration: 2000
-          })
-          this.getList()
-        })
-      }).catch(() => {
-        this.$notify({
-          title: '取消',
-          message: '取消拒绝',
-          type: 'success',
-          duration: 2000
-        })
-      })
-    },
-    preAdmissionOne(id) {
-      this.$confirm('将预录取此学生, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        preAdmission(id).then(response => {
-          this.$notify({
-            title: '预录取',
-            message: '已预录取',
-            type: 'success',
-            duration: 2000
-          })
-          this.getList()
-        })
-      }).catch(() => {
-        this.$notify({
-          title: '取消',
-          message: '取消预录取',
-          type: 'success',
-          duration: 2000
-        })
+      infoByUserId(this.listQuery.schoolId).then(response => {
+        this.specialityOptions = response.data
       })
     },
     // 排序触发事件
