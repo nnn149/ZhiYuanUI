@@ -7,3 +7,9 @@ export function fetchList() {
   })
 }
 
+export function chengji() {
+  return request({
+    url: '/student?method=chengji',
+    method: 'get'
+  })
+}

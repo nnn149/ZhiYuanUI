@@ -11,6 +11,9 @@ import voluntaryRouter from './modules/voluntary'
 import studentRouter from './modules/student'
 import schoolRouter from './modules/school'
 import adminRouter from './modules/admin'
+import specialityRouter from './modules/speciality'
+import schoolYiRouter from './modules/schoolYi'
+import chengjiRouter from './modules/studentChengji'
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -108,6 +111,9 @@ export const asyncRoutes = [
   voluntaryRouter,
   schoolRouter,
   adminRouter,
+  specialityRouter,
+  schoolYiRouter,
+  chengjiRouter,
   {
     path: '/theme',
     component: Layout,

@@ -65,7 +65,7 @@
           <el-button ref="btnSee" :style="{ display: visibleSee }" type="primary" size="mini" @click="handleUpdate(row)">
             查看
           </el-button>
-          <el-button type="primary" size="mini" @click="handleSubmit()">
+          <el-button type="primary" :style="{ display: tijiaoSee }" size="mini" @click="handleSubmit()">
             提交
           </el-button>
         </template>
@@ -944,6 +944,7 @@ export default {
       schoolOptions: [],
       specialityLoading: false,
       visibleSee: 'none',
+      tijiaoSee: 'none',
       visibleEdit: 'block',
       visibleSave: 'inline',
       listQuery: {
@@ -1427,6 +1428,11 @@ export default {
           this.visibleEdit = 'none'
           this.visibleSee = 'inline'
           this.visibleSave = 'none'
+        }
+        if (response.data.items[0].status === '已填报') {
+          this.tijiaoSee = 'inline'
+        } else {
+          this.tijiaoSee = 'none'
         }
       })
       fetchOne(0, 0).then(response => {

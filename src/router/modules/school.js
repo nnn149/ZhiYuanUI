@@ -16,7 +16,7 @@ const schoolRouter = {
     {
       path: 'schoolList',
       component: () => import('@/views/voluntary/voSchoolList'),
-      name: 'SchoolList',
+      name: 'VoSchoolList',
       meta: { title: '志愿列表' }
     }
   ]

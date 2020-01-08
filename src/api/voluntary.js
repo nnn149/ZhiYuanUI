@@ -24,6 +24,14 @@ export function schoolList(data) {
   })
 }
 
+export function schoolYiList(data) {
+  return request({
+    url: '/voluntary?method=schoolYiList',
+    method: 'post',
+    data
+  })
+}
+
 export function adminList(data) {
   return request({
     url: '/voluntary?method=adminList',
@@ -60,6 +68,14 @@ export function pizhun(id) {
     url: '/voluntary?method=pizhun',
     method: 'get',
     params: { id }
+  })
+}
+
+export function pizhunList(data) {
+  return request({
+    url: '/voluntary?method=pizhunList',
+    method: 'post',
+    data
   })
 }
 
