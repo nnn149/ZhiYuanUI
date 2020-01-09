@@ -13,3 +13,10 @@ export function chengji() {
     method: 'get'
   })
 }
+
+export function chengjiCharts() {
+  return request({
+    url: '/student?method=chengjiCharts',
+    method: 'get'
+  })
+}

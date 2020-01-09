@@ -64,7 +64,7 @@ export default {
     setOptions({ expectedData, actualData } = {}) {
       this.chart.setOption({
         xAxis: {
-          data: ['七天前', '六天前', '五天前', '四天前', '前天', '昨天', '今天'],
+          data: [200, 225, 250, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600],
           boundaryGap: false,
           axisTick: {
             show: false
@@ -90,7 +90,7 @@ export default {
           }
         },
         legend: {
-          data: ['actual']
+          data: ['学生人数']
         },
         series: [{
           name: 'expected', itemStyle: {
@@ -109,7 +109,7 @@ export default {
           animationEasing: 'cubicInOut'
         },
         {
-          name: 'actual',
+          name: '学生人数',
           smooth: true,
           type: 'line',
           itemStyle: {
@@ -127,7 +127,8 @@ export default {
           data: actualData,
           animationDuration: 2800,
           animationEasing: 'quadraticOut'
-        }]
+        }
+        ]
       })
     }
   }

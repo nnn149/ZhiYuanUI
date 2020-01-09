@@ -114,7 +114,7 @@
           <span class="link-type" @click="handleUpdate(row)">{{ row.nickname }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="身份证号" min-width="110px">
+      <el-table-column label="考生号" min-width="110px">
         <template slot-scope="scope">
           <span>{{ scope.row.username }}</span>
         </template>

@@ -6,7 +6,7 @@ const schoolYiRouter = {
   path: '/school',
   component: Layout,
   redirect: '/school/schoolYiList',
-  name: 'School',
+  name: 'SchoolYi',
   meta: {
     title: '录取结果',
     icon: 'table',

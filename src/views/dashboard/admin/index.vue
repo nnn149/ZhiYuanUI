@@ -1,66 +1,35 @@
 <template>
   <div class="dashboard-editor-container">
     <github-corner class="github-corner" />
-
-    <panel-group @handleSetLineChartData="handleSetLineChartData" />
-
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart :chart-data="lineChartData" />
-    </el-row>
-
-    <el-row :gutter="32">
-      <el-col :xs="24" :sm="24" :lg="8">
-        <div class="chart-wrapper">
-          <pie-chart />
-        </div>
-      </el-col>
     </el-row>
   </div>
 </template>
 
 <script>
 import GithubCorner from '@/components/GithubCorner'
-import PanelGroup from './components/PanelGroup'
 import LineChart from './components/LineChart'
-import PieChart from './components/PieChart'
-import { getLineChartData } from '@/api/customer'
+import { chengjiCharts } from '@/api/student'
 
 export default {
   name: 'DashboardAdmin',
   components: {
     GithubCorner,
-    PanelGroup,
-    LineChart,
-    PieChart
+    LineChart
   },
   data() {
     return {
-      allLineChartData: {
-        newVisitis: {
-          actualData: [120, 82, 91, 154, 162, 140, 145]
-        },
-        messages: {
-          actualData: [180, 160, 151, 106, 145, 150, 130]
-        },
-        purchases: {
-          actualData: [120, 90, 100, 138, 142, 130, 130]
-        },
-        shoppings: {
-          actualData: [120, 82, 91, 154, 162, 140, 130]
-        }
-      },
-      lineChartData: undefined
+      lineChartData: { actualData: [120, 82, 91, 154, 162, 140, 145, 120, 82, 91, 154, 162, 140, 145, 600, 500, 400] }
     }
   },
   created() {
-    getLineChartData().then(response => {
-      this.allLineChartData = response.data
-      this.lineChartData = this.allLineChartData.newVisitis
+    chengjiCharts().then(response => {
+      this.lineChartData.actualData = response.data
     })
   },
   methods: {
-    handleSetLineChartData(type) {
-      this.lineChartData = this.allLineChartData[type]
+    handleSetLineChartData() {
     }
   }
 }

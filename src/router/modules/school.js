@@ -3,9 +3,9 @@
 import Layout from '@/layout'
 
 const schoolRouter = {
-  path: '/school',
+  path: '/schoolYi',
   component: Layout,
-  redirect: '/school/schoolList',
+  redirect: '/schoolYi/schoolList',
   name: 'School',
   meta: {
     title: '志愿列表',
